@@ -1,5 +1,6 @@
 package LNU.pmi;
 
+import javax.crypto.Cipher;
 import javax.swing.*;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -7,11 +8,17 @@ import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.util.Map;
 
 
 public class GUI implements ActionListener
 {
     JFrame window;
+
+    // Main panels
+    JPanel centerMainPanel;
+    JPanel bottomMainPanel;
 
     // Input text
     JPanel inputTextPanel;
@@ -24,10 +31,13 @@ public class GUI implements ActionListener
     JScrollPane cipherTextScrollPane;
 
     // Cipher settings panel
-    JPanel cipherSettingsPanel;
+    JPanel cipherOptionsPanel;
+    CipherSettingsPanel cipherSettingsPanel;
 
     // Operation panel
     JPanel operationsPanel;
+    JButton decodeButton, encodeButton, statisticButton, testButton;
+    StatisticWindow statisticWindow;
     
     // Top menu bar
     JMenuBar menuBar;
@@ -40,14 +50,17 @@ public class GUI implements ActionListener
     // Help menu
     JMenuItem menuHelpItemAbout, menuHelpItemExit;
     AboutWindow aboutWindow;
+    
 
     public GUI()
     {
         createWindow();
+
         createInputTextPanel();
-        createCipherSettingsPanel();
+        createCipherOptionsPanel();
         createCipherTextPanel();
         createOperationsPanel();
+
         createMenuBar();
         createFileMenu();
         createHelpMenu();
@@ -59,76 +72,132 @@ public class GUI implements ActionListener
 
     private void createWindow()
     {
+        // Create center panel
+        centerMainPanel = new JPanel(new GridLayout(1,3));
+
+        // Create bottom panel
+        bottomMainPanel = new JPanel();
+        bottomMainPanel.setPreferredSize(new Dimension(1, 100));
+
+        // Create main window
         window = new JFrame("Crypt");
         window.setSize(1200, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
+        window.setLayout(new BorderLayout());
+        window.add(centerMainPanel, BorderLayout.CENTER);
+        window.add(bottomMainPanel, BorderLayout.SOUTH);
 
+        // Create about window
         aboutWindow = new AboutWindow();
         aboutWindow.setLocationRelativeTo(this.window);
     }
 
-
     private void createInputTextPanel()
     {
-        // Create text panel
-        inputTextPanel = new JPanel();
-        inputTextPanel.setBorder(BorderFactory.createTitledBorder("Input text"));
-
         // Create text area
         inputTextArea = new JTextArea();
         inputTextArea.setLineWrap(true);
         inputTextArea.setWrapStyleWord(true);
+        inputTextArea.setFont(Resources.TEXT_AREA_FONT);
 
+        // Create scroll pane
         inputTextScrollPane = new JScrollPane(inputTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         inputTextScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
+        // Create panel
+        inputTextPanel = new JPanel(new BorderLayout());
+        inputTextPanel.setBorder(BorderFactory.createTitledBorder("Input text"));
         inputTextPanel.add(inputTextScrollPane);
 
-        window.add(inputTextPanel);
+        // Add panel to main one
+        centerMainPanel.add(inputTextPanel);
     }
 
     
     private void createCipherTextPanel()
     {
-        // Create text panel
-        cipherTextPanel = new JPanel();
-        cipherTextPanel.setBorder(BorderFactory.createTitledBorder("Cipher text"));
-
         // Create text area
         cipherTextArea = new JTextArea();
+        cipherTextArea.setLineWrap(true);
+        cipherTextArea.setWrapStyleWord(true);
+        cipherTextArea.setEditable(false);
+        cipherTextArea.setFont(Resources.TEXT_AREA_FONT);
 
+
+        // Create scroll pane
         cipherTextScrollPane = new JScrollPane(cipherTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         cipherTextScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
+        // Create text panel
+        cipherTextPanel = new JPanel(new BorderLayout());
+        cipherTextPanel.setBorder(BorderFactory.createTitledBorder("Cipher text"));
         cipherTextPanel.add(cipherTextScrollPane);
 
-        window.add(cipherTextPanel);
+        // Add panel to main one
+        centerMainPanel.add(cipherTextPanel);
     }
 
 
-    private void createCipherSettingsPanel()
+    private void createCipherOptionsPanel()
     {
-        cipherSettingsPanel = new JPanel();
-        cipherSettingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
+        // Create cipher settings panel
+        cipherSettingsPanel = new CipherSettingsPanel(this);
 
-        window.add(cipherSettingsPanel);
+        // Create options panel
+        cipherOptionsPanel = new JPanel(new BorderLayout());
+        cipherOptionsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
+        cipherOptionsPanel.add(cipherSettingsPanel);
 
+        // Add panel to main one
+        centerMainPanel.add(cipherOptionsPanel);
     }
 
     private void createOperationsPanel()
     {
+        // Create encode button
+        encodeButton = new JButton("Encode");
+        encodeButton.setBackground(Color.GREEN);
+        encodeButton.setFont(Resources.ENCODE_DECODE_BUTTON_FONT);
+        encodeButton.setPreferredSize(new Dimension(100,50));
+        encodeButton.addActionListener(this);
+        encodeButton.setActionCommand("EncodeAction");
+
+        // Create decode button
+        decodeButton = new JButton("Decode");
+        decodeButton.setBackground(Color.RED);
+        decodeButton.setFont(Resources.ENCODE_DECODE_BUTTON_FONT);
+        decodeButton.setPreferredSize(new Dimension(100,50));
+        decodeButton.addActionListener(this);
+        decodeButton.setActionCommand("DecodeAction");
+
+        // Create test button
+        testButton = new JButton("Test");
+        testButton.setPreferredSize(new Dimension(100,25));
+
+        // Create encode button
+        statisticButton = new JButton("Statistic");
+        statisticButton.setPreferredSize(new Dimension(100,25));
+        statisticButton.addActionListener(this);
+        statisticButton.setActionCommand("StatisticAction");
+        
+        // Create panel
         operationsPanel = new JPanel();
-        operationsPanel.setBorder(BorderFactory.createTitledBorder("Operations"));
+        operationsPanel.add(testButton);
+        operationsPanel.add(encodeButton);
+        operationsPanel.add(decodeButton);
+        operationsPanel.add(statisticButton);
 
-        window.add(cipherSettingsPanel);
+        // Add panel to main one
+        bottomMainPanel.add(operationsPanel);
 
+        statisticWindow = new StatisticWindow(this);
     }
 
 
@@ -208,6 +277,18 @@ public class GUI implements ActionListener
             case "HelpExit":
                 System.exit(0);
                 break;
+
+            // Options
+            case "EncodeAction":
+                cipherSettingsPanel.encode();
+                break;
+            case "DecodeAction":
+                cipherSettingsPanel.decode();
+                break;
+            case "StatisticAction":
+                statisticWindow.showWindow();
+                break;
+                
 
         }
     }

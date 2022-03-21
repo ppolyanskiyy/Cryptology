@@ -11,6 +11,5 @@ public class AboutWindow extends JFrame {
 
     public void showWindow() {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
-
     }
 }
