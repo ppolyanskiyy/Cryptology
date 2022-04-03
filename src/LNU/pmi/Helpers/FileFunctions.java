@@ -1,4 +1,6 @@
-package LNU.pmi;
+package LNU.pmi.Helpers;
+
+import LNU.pmi.GUI;
 
 import java.awt.*;
 import java.io.BufferedReader;

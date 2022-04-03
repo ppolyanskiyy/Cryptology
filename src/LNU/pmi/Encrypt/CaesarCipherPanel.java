@@ -1,8 +1,9 @@
-package LNU.pmi;
+package LNU.pmi.Encrypt;
+
+import LNU.pmi.Helpers.Resources;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Locale;
 
 public class CaesarCipherPanel extends ICipherPanel {
     SpinnerModel shiftSpinnerModel;
@@ -19,7 +20,7 @@ public class CaesarCipherPanel extends ICipherPanel {
     {
         // Crete alphabet area
         alphabetTextArea = new JTextArea();
-        alphabetTextArea.setFont(Resources.CAESAR_ALPHABET_TEXT_FONT);
+        alphabetTextArea.setFont(Resources.ALPHABET_TEXT_FONT);
         alphabetTextArea.setText("_abcdefghijklmnopqrstuvwxyz");
 
         // Create shift option
@@ -60,7 +61,6 @@ public class CaesarCipherPanel extends ICipherPanel {
         return cipherText;
     }
 
-
     @Override
     public String decode(String data) {
         //data = data.toLowerCase();
@@ -85,5 +85,11 @@ public class CaesarCipherPanel extends ICipherPanel {
             }
         }
         return cipherText;
+    }
+
+
+    @Override
+    public void test() {
+
     }
 }

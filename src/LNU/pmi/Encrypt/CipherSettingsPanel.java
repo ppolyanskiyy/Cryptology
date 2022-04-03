@@ -1,4 +1,7 @@
-package LNU.pmi;
+package LNU.pmi.Encrypt;
+
+import LNU.pmi.GUI;
+import LNU.pmi.Helpers.Resources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +16,7 @@ public class CipherSettingsPanel extends JPanel implements ActionListener {
     Map<String, ICipherPanel> cipherPanels;
 
     JComboBox cipherOptionsComboBox;
+
     CardLayout cardLayout = new CardLayout();
     JPanel cipherPanelsContainer;
 
@@ -22,9 +26,10 @@ public class CipherSettingsPanel extends JPanel implements ActionListener {
 
         // Set up cipher panels
         cipherPanels = new IdentityHashMap<>();
+
+        // TODO: Add other ciphers
         cipherPanels.put("Caesar", new CaesarCipherPanel());
-        //cipherPanels.put("Trithemius", new TrithemiusCipherPanel());
-        // TODO
+        cipherPanels.put("Trithemius", new TrithemiusCipherPanel());
 
         // Set up panels container
         cipherPanelsContainer = new JPanel();
@@ -47,19 +52,6 @@ public class CipherSettingsPanel extends JPanel implements ActionListener {
         this.add(cipherPanelsContainer, BorderLayout.CENTER);
     }
 
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JComboBox comboBox = (JComboBox)e.getSource();
-        String selected = comboBox.getSelectedItem().toString();
-
-        System.out.println(selected);
-        cardLayout.show(cipherPanelsContainer, selected);
-
-        this.revalidate();
-        this.repaint();
-    }
-
     public void encode()
     {
         String cipherItem = cipherOptionsComboBox.getSelectedItem().toString();
@@ -75,4 +67,22 @@ public class CipherSettingsPanel extends JPanel implements ActionListener {
 
         gui.cipherTextArea.setText(cipher.decode(gui.inputTextArea.getText()));
     }
+
+    public void test()
+    {
+        String cipherItem = cipherOptionsComboBox.getSelectedItem().toString();
+        ICipherPanel cipher = cipherPanels.get(cipherItem);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JComboBox comboBox = (JComboBox)e.getSource();
+        String selected = comboBox.getSelectedItem().toString();
+
+        cardLayout.show(cipherPanelsContainer, selected);
+
+        this.revalidate();
+        this.repaint();
+    }
+
 }

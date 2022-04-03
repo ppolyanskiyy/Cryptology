@@ -1,20 +1,20 @@
 package LNU.pmi;
 
-import javax.crypto.Cipher;
+import LNU.pmi.Encrypt.CipherSettingsPanel;
+import LNU.pmi.Helpers.FileFunctions;
+import LNU.pmi.Helpers.Resources;
+import LNU.pmi.Windows.AboutWindow;
+import LNU.pmi.Windows.StatisticWindow;
+
 import javax.swing.*;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.util.Map;
 
 
 public class GUI implements ActionListener
 {
-    JFrame window;
+    public JFrame window;
 
     // Main panels
     JPanel centerMainPanel;
@@ -22,12 +22,12 @@ public class GUI implements ActionListener
 
     // Input text
     JPanel inputTextPanel;
-    JTextArea inputTextArea;
+    public JTextArea inputTextArea;
     JScrollPane inputTextScrollPane;
 
     // Cipher text
     JPanel cipherTextPanel;
-    JTextArea cipherTextArea;
+    public JTextArea cipherTextArea;
     JScrollPane cipherTextScrollPane;
 
     // Cipher settings panel
@@ -197,6 +197,7 @@ public class GUI implements ActionListener
         // Add panel to main one
         bottomMainPanel.add(operationsPanel);
 
+        // Create statistic window
         statisticWindow = new StatisticWindow(this);
     }
 
@@ -288,6 +289,8 @@ public class GUI implements ActionListener
             case "StatisticAction":
                 statisticWindow.showWindow();
                 break;
+            case "TestAction":
+                cipherSettingsPanel.test();
                 
 
         }
