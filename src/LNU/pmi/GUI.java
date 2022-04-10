@@ -25,6 +25,7 @@ public class GUI implements ActionListener
     public JTextArea inputTextArea;
     JScrollPane inputTextScrollPane;
     JButton inputTextClearButton;
+    JButton inputTextFillButton;
 
     // Cipher text
     JPanel cipherTextPanel;
@@ -120,12 +121,24 @@ public class GUI implements ActionListener
         inputTextClearButton.addActionListener(this);
         inputTextClearButton.setActionCommand("InputTextClearAction");
 
+        //Create fill button
+        inputTextFillButton = new JButton("Fill");
+        inputTextFillButton.setBackground(Color.LIGHT_GRAY);
+        inputTextFillButton.setPreferredSize(new Dimension(-1, 30));
+        inputTextFillButton.addActionListener(this);
+        inputTextFillButton.setActionCommand("InputTextFillAction");
+
+        // Create panel for buttons
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2));
+        buttonsPanel.add(inputTextClearButton);
+        buttonsPanel.add(inputTextFillButton);
+
         // Create panel
         inputTextPanel = new JPanel(new BorderLayout());
         inputTextPanel.setBackground(Color.LIGHT_GRAY);
         inputTextPanel.setBorder(BorderFactory.createTitledBorder("Input text"));
         inputTextPanel.add(inputTextScrollPane, BorderLayout.CENTER);
-        inputTextPanel.add(inputTextClearButton, BorderLayout.SOUTH);
+        inputTextPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         // Add panel to main one
         centerMainPanel.add(inputTextPanel);
@@ -341,6 +354,10 @@ public class GUI implements ActionListener
             case "InputTextClearAction":
                 inputTextArea.setText("");
                 break;
+            case "InputTextFillAction":
+                inputTextArea.setText(Resources.LOREM_IPSUM);
+                break;
+
             case "CipherTextClearAction":
                 cipherTextArea.setText("");
                 break;

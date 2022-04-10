@@ -81,8 +81,8 @@ public class CaesarCipherPanel extends ICipherPanel {
 
         // Create shift option
         shiftSpinnerModel = new SpinnerNumberModel(3, 1, 26, 1);
-        shiftSpinner.setModel((shiftSpinnerModel));
-        shiftSpinner.setFont(Resources.CAESAR_SHIFT_TEXT_FONT);
+        shiftSpinner.setModel(shiftSpinnerModel);
+        shiftSpinner.setFont(Resources.SHIFT_TEXT_FONT);
 
         // Set up panel
         this.setLayout(new GridLayout(0, 1));
