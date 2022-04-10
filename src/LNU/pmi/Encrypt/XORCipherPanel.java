@@ -73,8 +73,8 @@ public class XORCipherPanel extends ICipherPanel {
         generateGammaButton.setBackground(Color.LIGHT_GRAY);
         generateGammaButton.addActionListener(e ->
         {
-            int leftLimit = 97; // letter 'a'
-            int rightLimit = 122; // letter 'z'
+            int leftLimit = 33; // '!'
+            int rightLimit = 126; // '~'
             int targetStringLength = ThreadLocalRandom.current().nextInt(1, 30);
             Random random = new Random();
 
