@@ -6,37 +6,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CaesarCipherPanel extends ICipherPanel {
-    SpinnerModel shiftSpinnerModel;
-    JSpinner shiftSpinner;
-    JTextArea alphabetTextArea;
+    private SpinnerModel shiftSpinnerModel;
+    private JSpinner shiftSpinner;
+    private JTextArea alphabetTextArea;
+
+    private JPanel mainPanel;
 
     CaesarCipherPanel()
     {
-        createPanel();
+        setupPanel();
     }
-
-
-    private void createPanel()
-    {
-        // Crete alphabet area
-        alphabetTextArea = new JTextArea();
-        alphabetTextArea.setFont(Resources.ALPHABET_TEXT_FONT);
-        alphabetTextArea.setText("_abcdefghijklmnopqrstuvwxyz");
-
-        // Create shift option
-        shiftSpinnerModel = new SpinnerNumberModel(3, 0, 10, 1);
-        shiftSpinner = new JSpinner(shiftSpinnerModel);
-        shiftSpinner.setFont(Resources.CAESAR_SHIFT_TEXT_FONT);
-
-        // Set up panel
-        this.setLayout(new BorderLayout(10, 10));
-
-        this.add(shiftSpinner, BorderLayout.NORTH);
-        this.add(alphabetTextArea, BorderLayout.CENTER);
-
-        this.setVisible(true);
-    }
-
 
     @Override
     public String encode(String data) {
@@ -91,5 +70,22 @@ public class CaesarCipherPanel extends ICipherPanel {
     @Override
     public void test() {
 
+    }
+
+
+    private void setupPanel()
+    {
+        // Crete alphabet area
+        alphabetTextArea.setFont(Resources.ALPHABET_TEXT_FONT);
+        alphabetTextArea.setText("_abcdefghijklmnopqrstuvwxyz");
+
+        // Create shift option
+        shiftSpinnerModel = new SpinnerNumberModel(3, 1, 26, 1);
+        shiftSpinner.setModel((shiftSpinnerModel));
+        shiftSpinner.setFont(Resources.CAESAR_SHIFT_TEXT_FONT);
+
+        // Set up panel
+        this.setLayout(new GridLayout(0, 1));
+        this.add(mainPanel);
     }
 }

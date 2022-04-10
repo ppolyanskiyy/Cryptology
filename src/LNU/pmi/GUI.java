@@ -24,11 +24,15 @@ public class GUI implements ActionListener
     JPanel inputTextPanel;
     public JTextArea inputTextArea;
     JScrollPane inputTextScrollPane;
+    JButton inputTextClearButton;
 
     // Cipher text
     JPanel cipherTextPanel;
     public JTextArea cipherTextArea;
     JScrollPane cipherTextScrollPane;
+    JButton cipherTextClearButton;
+    JButton cipherTextSwapButton;
+
 
     // Cipher settings panel
     JPanel cipherOptionsPanel;
@@ -77,6 +81,7 @@ public class GUI implements ActionListener
 
         // Create bottom panel
         bottomMainPanel = new JPanel();
+        bottomMainPanel.setBackground(Color.DARK_GRAY);
         bottomMainPanel.setPreferredSize(new Dimension(1, 100));
 
         // Create main window
@@ -108,10 +113,19 @@ public class GUI implements ActionListener
 
         inputTextScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
+        // Create clear button
+        inputTextClearButton = new JButton("Clear");
+        inputTextClearButton.setBackground(Color.LIGHT_GRAY);
+        inputTextClearButton.setPreferredSize(new Dimension(-1, 30));
+        inputTextClearButton.addActionListener(this);
+        inputTextClearButton.setActionCommand("InputTextClearAction");
+
         // Create panel
         inputTextPanel = new JPanel(new BorderLayout());
+        inputTextPanel.setBackground(Color.LIGHT_GRAY);
         inputTextPanel.setBorder(BorderFactory.createTitledBorder("Input text"));
-        inputTextPanel.add(inputTextScrollPane);
+        inputTextPanel.add(inputTextScrollPane, BorderLayout.CENTER);
+        inputTextPanel.add(inputTextClearButton, BorderLayout.SOUTH);
 
         // Add panel to main one
         centerMainPanel.add(inputTextPanel);
@@ -127,7 +141,6 @@ public class GUI implements ActionListener
         cipherTextArea.setEditable(false);
         cipherTextArea.setFont(Resources.TEXT_AREA_FONT);
 
-
         // Create scroll pane
         cipherTextScrollPane = new JScrollPane(cipherTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -135,10 +148,31 @@ public class GUI implements ActionListener
 
         cipherTextScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
+        // Create clear button
+        cipherTextClearButton = new JButton("Clear");
+        cipherTextClearButton.setBackground(Color.LIGHT_GRAY);
+        cipherTextClearButton.setPreferredSize(new Dimension(-1, 30));
+        cipherTextClearButton.addActionListener(this);
+        cipherTextClearButton.setActionCommand("CipherTextClearAction");
+
+        // Create swap button
+        cipherTextSwapButton = new JButton("Swap");
+        cipherTextSwapButton.setBackground(Color.LIGHT_GRAY);
+        cipherTextSwapButton.setPreferredSize(new Dimension(-1, 30));
+        cipherTextSwapButton.addActionListener(this);
+        cipherTextSwapButton.setActionCommand("CipherTextSwapAction");
+
+        // Create panel for buttons
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2));
+        buttonsPanel.add(cipherTextClearButton);
+        buttonsPanel.add(cipherTextSwapButton);
+
         // Create text panel
         cipherTextPanel = new JPanel(new BorderLayout());
+        cipherTextPanel.setBackground(Color.LIGHT_GRAY);
         cipherTextPanel.setBorder(BorderFactory.createTitledBorder("Cipher text"));
-        cipherTextPanel.add(cipherTextScrollPane);
+        cipherTextPanel.add(cipherTextScrollPane, BorderLayout.CENTER);
+        cipherTextPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         // Add panel to main one
         centerMainPanel.add(cipherTextPanel);
@@ -152,6 +186,7 @@ public class GUI implements ActionListener
 
         // Create options panel
         cipherOptionsPanel = new JPanel(new BorderLayout());
+        cipherOptionsPanel.setBackground(new Color(0,0,0,0));
         cipherOptionsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
         cipherOptionsPanel.add(cipherSettingsPanel);
 
@@ -179,16 +214,20 @@ public class GUI implements ActionListener
 
         // Create test button
         testButton = new JButton("Test");
+        testButton.setBackground(Color.LIGHT_GRAY);
         testButton.setPreferredSize(new Dimension(100,25));
 
         // Create encode button
         statisticButton = new JButton("Statistic");
+        statisticButton.setBackground(Color.LIGHT_GRAY);
         statisticButton.setPreferredSize(new Dimension(100,25));
         statisticButton.addActionListener(this);
         statisticButton.setActionCommand("StatisticAction");
         
         // Create panel
         operationsPanel = new JPanel();
+        operationsPanel.setBackground(new Color(0,0,0,0));
+
         operationsPanel.add(testButton);
         operationsPanel.add(encodeButton);
         operationsPanel.add(decodeButton);
@@ -205,10 +244,16 @@ public class GUI implements ActionListener
     private void createMenuBar()
     {
         menuBar = new JMenuBar();
+        menuBar.setBackground(Color.DARK_GRAY);
+
         window.setJMenuBar(menuBar);
 
-        menuFile = new JMenu("File");
+        menuFile = new JMenu( "File");
+        menuFile.setForeground(Color.LIGHT_GRAY);
+
         menuHelp = new JMenu("Help");
+        menuHelp.setForeground(Color.LIGHT_GRAY);
+
 
         menuBar.add(menuFile);
         menuBar.add(menuHelp);
@@ -291,7 +336,18 @@ public class GUI implements ActionListener
                 break;
             case "TestAction":
                 cipherSettingsPanel.test();
-                
+                break;
+
+            case "InputTextClearAction":
+                inputTextArea.setText("");
+                break;
+            case "CipherTextClearAction":
+                cipherTextArea.setText("");
+                break;
+            case "CipherTextSwapAction":
+                inputTextArea.setText(cipherTextArea.getText());
+                cipherTextArea.setText("");
+                break;
 
         }
     }

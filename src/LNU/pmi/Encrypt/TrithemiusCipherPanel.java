@@ -20,19 +20,6 @@ public class TrithemiusCipherPanel extends ICipherPanel {
         setupPanel();
     }
 
-    void setupPanel() {
-        keyTypeComboBox.setFont(Resources.TEXT_AREA_FONT);
-
-        keyTextArea.setText("2,4,6");
-        keyTextArea.setFont(Resources.TEXT_AREA_FONT);
-
-        shiftTextArea.setText("128");
-        shiftTextArea.setFont(Resources.TEXT_AREA_FONT);
-
-        this.setLayout(new GridLayout(0, 1));
-        this.add(mainPanel);
-    }
-
     @Override
     public String encode(String data) {
         var keys = getKeys(data);
@@ -146,5 +133,18 @@ public class TrithemiusCipherPanel extends ICipherPanel {
             result.add((int)mottoAsArray[i]);
         }
         return result;
+    }
+
+    private void setupPanel() {
+        keyTypeComboBox.setFont(Resources.TEXT_AREA_FONT);
+
+        keyTextArea.setText("2,4,6");
+        keyTextArea.setFont(Resources.TEXT_AREA_FONT);
+
+        shiftTextArea.setText("128");
+        shiftTextArea.setFont(Resources.TEXT_AREA_FONT);
+
+        this.setLayout(new GridLayout(0, 1));
+        this.add(mainPanel);
     }
 }

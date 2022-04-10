@@ -27,9 +27,10 @@ public class CipherSettingsPanel extends JPanel implements ActionListener {
         // Set up cipher panels
         cipherPanels = new IdentityHashMap<>();
 
-        // TODO: Add other ciphers
         cipherPanels.put("Caesar", new CaesarCipherPanel());
         cipherPanels.put("Trithemius", new TrithemiusCipherPanel());
+        cipherPanels.put("XOR", new XORCipherPanel());
+        // TODO: Add other ciphers
 
         // Set up panels container
         cipherPanelsContainer = new JPanel();
