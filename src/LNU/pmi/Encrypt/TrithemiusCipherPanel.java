@@ -14,7 +14,9 @@ public class TrithemiusCipherPanel extends ICipherPanel {
 
     private JComboBox keyTypeComboBox;
     private JTextArea keyTextArea;
-    private JTextArea shiftTextArea;
+    private JSpinner shiftSpinner;
+
+    private int defaultShiftValue = 126;
 
     TrithemiusCipherPanel() {
         setupPanel();
@@ -23,7 +25,7 @@ public class TrithemiusCipherPanel extends ICipherPanel {
     @Override
     public String encode(String data) {
         var keys = getKeys(data);
-        int shift = Integer.parseInt(shiftTextArea.getText());
+        int shift = (int)shiftSpinner.getValue();
 
         StringBuilder sb = new StringBuilder();
         char[] incomingChars = data.toCharArray();
@@ -39,7 +41,7 @@ public class TrithemiusCipherPanel extends ICipherPanel {
     @Override
     public String decode(String data) {
         var keys = getKeys(data);
-        int shift = Integer.parseInt(shiftTextArea.getText());
+        int shift = (int)shiftSpinner.getValue();
 
         StringBuilder sb = new StringBuilder();
         char[] incomingChars = data.toCharArray();
@@ -141,8 +143,10 @@ public class TrithemiusCipherPanel extends ICipherPanel {
         keyTextArea.setText("2,4,6");
         keyTextArea.setFont(Resources.TEXT_AREA_FONT);
 
-        shiftTextArea.setText("128");
-        shiftTextArea.setFont(Resources.TEXT_AREA_FONT);
+        // Create shift option
+        var spinnerNumberModel = new SpinnerNumberModel(defaultShiftValue, 126, 1000, 1);
+        shiftSpinner.setModel(spinnerNumberModel);
+        shiftSpinner.setFont(Resources.SHIFT_TEXT_FONT);
 
         this.setLayout(new GridLayout(0, 1));
         this.add(mainPanel);

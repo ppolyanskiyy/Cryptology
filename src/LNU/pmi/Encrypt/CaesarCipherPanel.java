@@ -11,6 +11,7 @@ public class CaesarCipherPanel extends ICipherPanel {
     private JTextArea alphabetTextArea;
 
     private JPanel mainPanel;
+    private JProgressBar progressBar1;
 
     CaesarCipherPanel()
     {
