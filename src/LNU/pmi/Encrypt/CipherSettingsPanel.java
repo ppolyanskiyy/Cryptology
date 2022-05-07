@@ -31,6 +31,7 @@ public class CipherSettingsPanel extends JPanel implements ActionListener {
         cipherPanels.put("Trithemius", new TrithemiusCipherPanel());
         cipherPanels.put("XOR", new XORCipherPanel());
         cipherPanels.put("Vigenere", new VigenereCipherPanel());
+        cipherPanels.put("RSA", new RSACipherPanel());
 
         // TODO: Add other ciphers
 
