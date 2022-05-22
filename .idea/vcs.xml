@@ -4,6 +4,7 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Examples/Tritemius-cipher" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/RSA" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/RSA_simple" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Tritemius-cipher" vcs="Git" />
   </component>
 </project>

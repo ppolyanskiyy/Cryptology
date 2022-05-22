@@ -45,16 +45,15 @@ public class RSACipherPanel extends ICipherPanel {
     private JTextArea publicKeyTextArea;
     private JButton generateKeysButton;
     private JTextArea privateKeyTextArea;
-    private JSpinner pSpinner;
-    private JSpinner qSpinner;
     private JPanel mainPanel;
+    private JButton pGenerateButton;
+    private JButton qGenerateButton;
+    private JTextArea pTextArea;
+    private JTextArea qTextArea;
 
-    private SpinnerModel pShiftSpinnerModel;
-    private SpinnerModel qShiftSpinnerModel;
-
-    int e = 0;
-    int d = 0;
-    int n = 0;
+    BigInteger n_;
+    BigInteger e_;
+    BigInteger d_;
 
     RSACipherPanel()
     {
@@ -63,26 +62,27 @@ public class RSACipherPanel extends ICipherPanel {
 
     @Override
     public String encode(String data) {
-        StringBuilder sb = new StringBuilder();
-        char[] incomingChars = data.toCharArray();
+        // Convert string to numbers using a cipher
+        BigInteger cipherMessage = stringCipher(data);
 
-        for (int i = 0; i < incomingChars.length; i++) {
-            char c = (char) (Math.pow((int) incomingChars[i], e) % n);
-            sb.append(c);
-        }
-        return sb.toString();
+        // Encrypt the ciphered message
+        BigInteger encrypted = cipherMessage.modPow(e_, n_);
+
+        return encrypted.toString();
     }
 
     @Override
     public String decode(String data) {
-        StringBuilder sb = new StringBuilder();
-        char[] incomingChars = data.toCharArray();
+        // Convert string to numbers using a cipher
+        BigInteger cipherMessage = new BigInteger(data);
 
-        for (int i = 0; i < incomingChars.length; i++) {
-            char c = (char) (Math.pow((int) incomingChars[i], d) % n);
-            sb.append(c);
-        }
-        return sb.toString();
+        // Decrypt the encrypted message
+        BigInteger decrypted = cipherMessage.modPow(d_, n_);
+
+        // Uncipher the decrypted message to text
+        String restoredMessage = cipherToString(decrypted);
+
+        return restoredMessage;
     }
 
 
@@ -93,14 +93,17 @@ public class RSACipherPanel extends ICipherPanel {
 
     private void setupPanel()
     {
-        // Create shift option
-        pShiftSpinnerModel = new SpinnerNumberModel(17, 1, 10000, 1);
-        pSpinner.setModel(pShiftSpinnerModel);
-        pSpinner.setFont(Resources.SHIFT_TEXT_FONT);
+        pGenerateButton.setBackground(Color.LIGHT_GRAY);
+        pGenerateButton.addActionListener(e ->
+        {
+            pTextArea.setText(largePrime(512).toString());
+        });
 
-        qShiftSpinnerModel = new SpinnerNumberModel(23, 1, 10000, 1);
-        qSpinner.setModel(qShiftSpinnerModel);
-        qSpinner.setFont(Resources.SHIFT_TEXT_FONT);
+        qGenerateButton.setBackground(Color.LIGHT_GRAY);
+        qGenerateButton.addActionListener(e ->
+        {
+            qTextArea.setText(largePrime(512).toString());
+        });
 
         generateKeysButton.setBackground(Color.LIGHT_GRAY);
         generateKeysButton.addActionListener(e ->
@@ -108,6 +111,8 @@ public class RSACipherPanel extends ICipherPanel {
             generateKeys();
         });
 
+        pTextArea.setFont(Resources.TEXT_AREA_FONT);
+        qTextArea.setFont(Resources.TEXT_AREA_FONT);
         publicKeyTextArea.setFont(Resources.TEXT_AREA_FONT);
         privateKeyTextArea.setFont(Resources.TEXT_AREA_FONT);
 
@@ -118,39 +123,137 @@ public class RSACipherPanel extends ICipherPanel {
 
     private void generateKeys()
     {
-        int p = (int)qSpinner.getValue();
-        int q = (int)pSpinner.getValue();
+        // 1. Get primes p and q
+        BigInteger p = new BigInteger(pTextArea.getText());
+        BigInteger q = new BigInteger(qTextArea.getText());
 
-        n = p * q;
-        int z = (p-1) * (q-1);
+        // 2. Compute n from p and q
+        n_ = p.multiply(q);
 
-        for (e = 2; e < z; e++) {
+        // 3. Compute Phi(n) (Euler's totient function)
+        // Phi(n) = (p-1)(q-1)
+        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
 
-            // e is for public key exponent
-            if (gcd(e, z) == 1) {
-                break;
-            }
-        }
+        // 4. Find an int e such that 1 < e < Phi(n) and gcd(e,Phi) = 1
+        e_ = generateE(phi);
 
-        for (int i = 0; i <= 9; i++) {
-            int x = 1 + (i * z);
+        // 5. Calculate d where  d ≡ e^(-1) (mod Phi(n))
+        d_ = generateG(e_, phi);
 
-            // d is for private key exponent
-            if (x % e == 0) {
-                d = x / e;
-                break;
-            }
-        }
+        // Print results
+        publicKeyTextArea.setText(String.format("e = %d", e_));
+        privateKeyTextArea.setText(String.format("d = %d", d_));
 
-        publicKeyTextArea.setText(String.format("{e, n} = {%d, %d}", e, n));
-        privateKeyTextArea.setText(String.format("{d, n} = {%d, %d}", d, n));
+        System.out.println("p = " + p);
+        System.out.println("q = " + q);
+        System.out.println("n = " + n_);
+
     }
 
-    static int gcd(int e, int z)
+    /**
+     * generate e by finding a Phi such that they are coprimes (gcd = 1)
+     */
+    public static BigInteger generateE(BigInteger phi) {
+        BigInteger e = BigInteger.ZERO;
+
+        for (e = BigInteger.TWO; e.compareTo(phi) == -1; e = e.add(BigInteger.ONE)) {
+
+            // e is for public key exponent
+            if (gcd(e, phi).equals(BigInteger.ONE)) {
+                break;
+            }
+        }
+
+        return e;
+    }
+
+    public static BigInteger generateG(BigInteger e, BigInteger phi)
     {
-        if (e == 0)
-            return z;
-        else
-            return gcd(z % e, e);
+        BigInteger d = BigInteger.ZERO;
+
+        for (int i = 0; i <= 9; i++) {
+            BigInteger x = BigInteger.valueOf(i).multiply(phi);
+            x = x.add(BigInteger.ONE);
+
+            if (x.mod(e).equals(BigInteger.ZERO))
+            {
+                d = x.divide(e);
+                break;
+            }
+        }
+
+        return d;
+    }
+
+    /** Recursive EXTENDED Euclidean algorithm, solves Bezout's identity (ax + by = gcd(a,b))
+     * and finds the multiplicative inverse which is the solution to ax ≡ 1 (mod m)
+     * returns [d, p, q] where d = gcd(a,b) and ap + bq = d
+     * Note: Uses BigInteger operations
+     */
+    public static BigInteger[] extendedEuclidAlgorithm(BigInteger a, BigInteger b) {
+        if (b.equals(BigInteger.ZERO)) return new BigInteger[] {
+                a, BigInteger.ONE, BigInteger.ZERO
+        }; // { a, 1, 0 }
+        BigInteger[] vals = extendedEuclidAlgorithm(b, a.mod(b));
+        BigInteger d = vals[0];
+        BigInteger p = vals[2];
+        BigInteger q = vals[1].subtract(a.divide(b).multiply(vals[2]));
+        return new BigInteger[] {
+                d, p, q
+        };
+    }
+
+    /**
+     * Takes a string and converts each character to an ASCII decimal value
+     * Returns BigInteger
+     */
+    public static BigInteger stringCipher(String message) {
+        message = message.toUpperCase();                //---->>>> DIRTY
+        String cipherString = "";
+
+        for (int i = 0; i < message.length() ; i++) {
+            int ch = (int) message.charAt(i);
+
+            cipherString += ch;
+
+        }
+        BigInteger cipherBig = new BigInteger(String.valueOf(cipherString));
+        return cipherBig;
+    }
+
+
+    /**
+     * Takes a BigInteger that is ciphered and converts it back to plain text
+     *	returns a String
+     */
+    public static String cipherToString(BigInteger message) {
+        String cipherString = message.toString();
+        String output = "";
+
+        for (int i = 0; i < cipherString.length() ; i+=2) {
+            int temp = Integer.parseInt(cipherString.substring(i, i + 2));
+            char ch = (char) temp;
+            output += ch;
+
+        }
+        return output;
+    }
+
+    public static BigInteger gcd(BigInteger a, BigInteger b) {
+        if (b.equals(BigInteger.ZERO)) {
+            return a;
+        } else {
+            return gcd(b, a.mod(b));
+        }
+    }
+
+    /**
+     * Generates a random large prime number of specified bitlength
+     *
+     */
+    public static BigInteger largePrime(int bits) {
+        Random randomInteger = new Random();
+        BigInteger largePrime = BigInteger.probablePrime(bits, randomInteger);
+        return largePrime;
     }
 }
